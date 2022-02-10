@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>To do list</title>
+        <link href ="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
+        <link rel="stylesheet" href="{{ url_for('static', filename='flatly.min.css') }}" /> 
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" /> 
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    </head>
+
+    <body>
+      <div class="container-fluid" id="wrapper">
+        <h1 id="title">Make a todo list.</h1>
+          <div>
+            <h2>Just do it!</h2>
+            <form action="{{url_for('add')}}" method ="POST" >
+              <div class="form-group">
+                <div class="input-group"> 
+                  <input type="list" name="Todo" class="form-control" placeholder="Enter todo lists"  >
+                  <span class="input-group-btn"><input type="date" name="date"  class="form-control"  placeholder="Enter ddl"  ></span>
+                  <span class="input-group-btn">
+                    <button type="submit" class="btn btn-secondary">ADD</button>
+                  </span>
+                </div>
+              </div>
+            </form>
+          </div>
+        
+        <div class="row t10">
+          <div class="col-lg-12">
+            <div class="btn-toolbar">
+              <div class="btn-group">
+                <a type="button" href="{{ url_for('delete') }}" class="btn btn-primary">
+                  DELETE COMPLETED
+                </a>
+            </div>
+            </div>
+          </div>
+        </div>
+        <ul class="list-group t30">
+          {%for task in tasks %}
+          <a href ="{{url_for('complete',oid=task.id)}}">
+            <li class="list-group-item {% if task.state %} todo-completed {% endif %}">
+              {{ task.list}}
+            </li>
+          </a>
+          {%endfor%}
+        </ul>
+        <h2>Timer</h2>
+        <p>Click on the start button to <strong>work effectively for 30 mins and have a rest</strong>.</p>
+        <div id="timer">
+          <h1>
+            <span id="min">30</span>
+            <span class="timer__part">:</span>
+            <span id="sec">00</span>
+          </h1>
+          <button type="button" id="start">
+              <span class="material-icons">restart_alt</span>
+          </button>
+          <button type="button" id="reset">
+              <span class="material-icons">timer</span>
+          </button>
+        </div>
+      </div>
+      
+     
+    </body>
+    <script>
+      var start=document.getElementById('start')
+      var reset=document.getElementById('reset')
+      var min = document.getElementById('min')
+      var sec = document.getElementById('sec')
+      var remainingsec = 59
+      var remaiinigmin = 29
+      var interval = null
+      var flag = false
+
+      start.onclick=function(){
+        if(flag)
+        {
+          flag=false
+          clearInterval(timer)
+        }
+        else{
+          flag=true
+          timer = setInterval(()=>{
+            if(Number(remaiinigmin)===0 && Number(remainingsec)===0){
+              clearInterval(timer)
+              sec.innerText=00
+              min.innerText=30
+              flag=false
+            }
+            sec.innerText=remainingsec<10 ?'0'+remainingsec:remainingsec
+            min.innerText=remaiinigmin<10 ?'0'+remaiinigmin:remaiinigmin
+            if(Number(remainingsec)<=0 && Number(remaiinigmin)>=0){
+              remainingsec=60
+              remaiinigmin--  
+            }
+            remainingsec--
+          },1000);
+        }
+      }
+
+      reset.onclick=function(){
+        clearInterval(timer)
+        flag=false
+        remaiinigmin=29
+        remainingsec=59
+        sec.innerText=59
+        min=innerText=29
+      }
+    </script>
+</html>
